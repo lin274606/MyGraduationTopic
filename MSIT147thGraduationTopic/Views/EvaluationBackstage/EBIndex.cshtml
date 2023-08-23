@@ -1,0 +1,202 @@
+﻿@model IEnumerable<MSIT147thGraduationTopic.Models.ViewModels.EvaluationVM>
+
+@{
+    Layout = "_BackstagePage";
+    ViewData["Title"] = "BackStage";
+}
+
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-10">
+            <div class="d-flex justify-content-end">
+                <form method="post" id="SearchForm">
+                    <div class="input-group">
+                        <button class="btn btn-outline-secondary dropdown-toggle mt-1" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="height: 38px;">訂單編號</button>
+
+                        <ul class="dropdown-menu " >
+                            <li><a class="dropdown-item choose-type" data-search-type="OrderId">訂單編號</a></li>
+                            <li><a class="dropdown-item choose-type" data-search-type="merchandiseName">商品名稱</a></li>
+                            <li><a class="dropdown-item choose-type" data-search-type="Score">星星評分</a></li>
+                            <li><a class="dropdown-item choose-type" data-search-type="Comment">評論</a></li>
+                        </ul>
+                        <input name="searchtype" id="searchtype" type="hidden" value="@(ViewBag.Searchtype?? "OrderId")">
+                        <input name="Keyword" id="txtkeyword" type="text" class="form-control-sm d-flex me-2 mt-1" style="height: 38px;" placeholder="請輸入關鍵字">
+                        <img src="~/images/search.jpg" class="rounded-3 d-flex" id="btnKeywordImage" style="cursor: pointer;" />
+
+                    </div>
+                </form>
+            </div>
+            <table class="table bg-white mt-3 rounded-3 ">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.OrderId)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.MerchandiseName)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Score)
+                            @*<span id="btnSort" data-sortOrder="asc" style="cursor: pointer;">
+                            <img src="~/images/sort.png" style="height:20px;" />
+                            </span>*@
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Comment)
+                        </th>
+                        <th>
+                            刪除
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null)
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.OrderId)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.MerchandiseName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Score)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Comment)
+                                </td>
+                                <td>
+                                    <button type="submit" id="btnDelete" class="btn btn-primary btnDelete" data-id="@item.EvaluationId">刪除</button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+            <!-- 顯示分頁控制元件 -->
+            @if (ViewBag.TotalPage < 1 || ViewBag.Keyword == null)
+            {
+                <nav></nav>
+            }
+            else
+            {
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item">
+                            <a class="page-link" href="@Url.Action("EBIndex", new { pageNo = (ViewBag.PageNo - 1) > 0 ? ViewBag.PageNo - 1 : ViewBag.PageNo, keyword = ViewBag.Keyword ,totalCount = ViewBag.TotalCount ,searchtype = ViewBag.Searchtype  })" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        @if (ViewBag.TotalPage > 3 && ViewBag.PageNo > 3)
+                        {
+                            <li class="page-item">
+                                <a class="page-link pageclick" href="@Url.Action("EBIndex", new { pageNo = 1, keyword = ViewBag.Keyword ,totalCount = ViewBag.TotalCount ,searchtype = ViewBag.Searchtype})">1</a>
+                            </li>
+                            <li class="page-item disabled">
+                                <a class="page-link">...</a>
+                            </li>
+                        }
+                        @for (int i = ViewBag.PageNo - 1; i <= ViewBag.PageNo + 1; i++)
+                        {
+                            if (i >= 1 && i <= ViewBag.TotalPage)
+                            {
+                                <li class="page-item @(i == ViewBag.PageNo ? "active" : "")">
+                                    <a class="page-link pageclick" href="@Url.Action("EBIndex", new { pageNo = i, keyword = ViewBag.Keyword ,totalCount = ViewBag.TotalCount ,searchtype = ViewBag.Searchtype })">@i</a>
+                                </li>
+                            }
+                        }
+                        @if (ViewBag.TotalPage > 3 && ViewBag.PageNo < ViewBag.TotalPage - 1)
+                        {
+                            <li class="page-item disabled">
+                                <a class="page-link">...</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link pageclick" href="@Url.Action("EBIndex", new { pageNo = ViewBag.TotalPage, keyword = ViewBag.Keyword ,totalCount = ViewBag.TotalCount ,searchtype = ViewBag.Searchtype })">@ViewBag.TotalPage</a>
+                            </li>
+                        }
+                        <li class="page-item">
+                            <a class="page-link" href="@Url.Action("EBIndex", new { pageNo = (ViewBag.PageNo + 1) <= ViewBag.TotalPage ?ViewBag.PageNo + 1:ViewBag.PageNo , keyword = ViewBag.Keyword ,totalCount = ViewBag.TotalCount ,searchtype = ViewBag.Searchtype })" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+
+            }
+        </div>
+        <div class="col-1"></div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+
+        let searchtype = 'Orderid';
+
+        //刪除單筆留言
+        $('.btnDelete').click(function () {
+            var evaluationId = $(this).attr('data-id');
+            //console.log(evaluationId);
+            $.post('/EvaluationBackstage/Delete', { id: evaluationId }, function (data) {
+                window.location.reload(); //重載畫面
+            });
+        });
+
+        //關鍵字搜尋
+        $("#btnKeywordImage").click(function () {
+            var keywordValue = $("#txtkeyword").val();
+            //console.log(keywordValue);
+            $("#SearchForm").submit();
+        })
+
+        //關鍵字分開搜尋
+
+
+        //選擇搜尋型別
+        $('a.choose-type').click(e => {
+            const searchType = e.currentTarget.dataset.searchType
+            const searchTypeName = e.currentTarget.innerText
+            $(e.currentTarget).closest('.input-group').find('button.dropdown-toggle').text(searchTypeName)
+            $(e.currentTarget).closest('.input-group').find('#searchtype').val(searchType)
+        })
+
+        $("#btnKeywordImage").click(function () {
+            var keywordValue = $("#txtkeyword").val();
+            //console.log(keywordValue);
+            $("#SearchForm").submit();
+        })
+
+                                //$('#btnKeywordImage').click(async e => {
+                                //    const keyword = e.currentTarget.closest('div').querySelector('input[type=text]').value.trim()
+                                //    if (!keyword) return
+                                //    const searchType = e.currentTarget.closest('div').querySelector('input[type=text]').dataset.searchType
+                                //    const { id, name } = await getIdAndName(searchType, keyword)
+                                //    $('#txtkeyword').text(name)
+                                //    leftId = id
+                                //    leftTrendData = await getTrendData(leftMeasurement, leftId)
+                                //    console.log(leftTrendData)
+                                //    displayTrendChart()
+                                //})
+
+
+                                //排序
+                                    //$('#btnSort').click(function () {
+                                    //    var sortOrder = $(this).data('sortOrder') || 'asc';
+                                    //console.log(sortOrder)
+                                    //sortOrder = (sortOrder === 'asc') ? 'desc' : 'asc';
+                                    //$(this).data('sortOrder', sortOrder);
+                                    //var pageNo = @ViewBag.PageNo;
+                                    //var url = '@Url.Action("EBIndex", new { pageNo = "__pageNo__", sortOrder = "__sortOrder__" })';
+                                    //url = url.replace('__pageNo__', pageNo).replace('__sortOrder__', sortOrder);
+
+                                    //window.location.href = url; //根據頁碼及排序重載畫面
+                                    //});
+
+    </script>
+
+}
